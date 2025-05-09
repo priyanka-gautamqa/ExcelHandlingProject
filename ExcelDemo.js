@@ -21,7 +21,7 @@ worksheet.eachRow((row,rowNumber)=>{
 
 //OTHER WAY
 
-async function writeExcelTest(searchText,newValue,fileName){
+async function writeExcelTest(searchText,newValue,changePriceByAmount,fileName){
 
     const workbook = new ExcelJs.Workbook(); 
     await workbook.xlsx.readFile(fileName);
@@ -34,6 +34,10 @@ async function writeExcelTest(searchText,newValue,fileName){
     const cell = worksheet.getCell(output.row,output.column);
     cell.value = newValue;
 
+    const priceCell = worksheet.getCell(output.row,output.column+2);
+    console.log("Price before update : ",priceCell.value);
+    priceCell.value=priceCell.value+changePriceByAmount;
+    console.log("Price after update : ",priceCell.value);
     //save the above change 
     await workbook.xlsx.writeFile(fileName);
 
@@ -56,5 +60,10 @@ async function readExcel(worksheet,searchText){
     return output;
 }
 
-//send searchText from here
-writeExcelTest('Apple','PEACHES','ExcelDownloadTest.xlsx')
+/**
+ * First parameter- Text which needs to be replaced
+ * Second parameter - Text which will replace the given text
+ * Third parameter - update price by 50rupees more
+ * Fourth parameter - file name or file path
+ */
+writeExcelTest('Apple','PEACHES',100,'ExcelDownloadTest.xlsx')
