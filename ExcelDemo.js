@@ -20,31 +20,41 @@ worksheet.eachRow((row,rowNumber)=>{
 */
 
 //OTHER WAY
-async function excelTest(){
+
+async function writeExcelTest(searchText,newValue,fileName){
 
     const workbook = new ExcelJs.Workbook(); 
-    await workbook.xlsx.readFile('ExcelDownloadTest.xlsx');
+    await workbook.xlsx.readFile(fileName);
     const worksheet = workbook.getWorksheet('Sheet1');
-    let output = {row:-1,column:-1};
+  
 
-    //print all values of the excel
-    worksheet.eachRow((row,rowNumber)=>{
-        row.eachCell((cell,colNumber)=>{
-            //console.log(cell.value); -  to print all values
-            if(cell.value==='Apple'){
-                console.log(rowNumber,colNumber)
-                output.row=rowNumber;
-                output.column=colNumber;
-            }
-        })
-    })
+    const output = await readExcel(worksheet,searchText);
 
     //replace some cell value
     const cell = worksheet.getCell(output.row,output.column);
-    cell.value = 'PEACH';
+    cell.value = newValue;
 
     //save the above change 
-    workbook.xlsx.writeFile('ExcelDownloadTest.xlsx');
+    await workbook.xlsx.writeFile(fileName);
 
 }
-excelTest();
+
+
+async function readExcel(worksheet,searchText){
+    //print all values of the excel
+    let output = {row:1,column:1};
+    worksheet.eachRow((row,rowNumber)=>{
+        row.eachCell((cell,colNumber)=>{
+           // console.log(cell.value); //-  to print all values
+            if(cell.value===searchText){
+                output.row=rowNumber;
+                output.column=colNumber;
+                console.log("rowNumber",rowNumber);
+            }
+        })
+    })
+    return output;
+}
+
+//send searchText from here
+writeExcelTest('Apple','PEACHES','ExcelDownloadTest.xlsx')
